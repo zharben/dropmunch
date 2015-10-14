@@ -1,0 +1,168 @@
+$ alembic upgrade head
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 13954b670c3, create table import_format
+INFO  [alembic.runtime.migration] Running upgrade 13954b670c3 -> 5a46afbcc50, create table import_format_column
+INFO  [alembic.runtime.migration] Running upgrade 5a46afbcc50 -> 15a9fac5360, add import_format fk to import_format_column
+INFO  [alembic.runtime.migration] Running upgrade 15a9fac5360 -> 29ea689c019, create table import_log
+INFO  [alembic.runtime.migration] Running upgrade 29ea689c019 -> 5498dae6d7b, add import_format fk to import_log
+
+$ psql ...
+
+dropmunch=> \d
+                         List of relations
+ Schema |               Name                |   Type   |   Owner
+--------+-----------------------------------+----------+-----------
+ public | alembic_version                   | table    | dropmunch
+ public | import_data_hotcolor              | table    | dropmunch
+ public | import_data_hotcolor_id_seq       | sequence | dropmunch
+ public | import_data_origspecformat        | table    | dropmunch
+ public | import_data_origspecformat_id_seq | sequence | dropmunch
+ public | import_data_testformat1           | table    | dropmunch
+ public | import_data_testformat1_id_seq    | sequence | dropmunch
+ public | import_data_testformat2           | table    | dropmunch
+ public | import_data_testformat2_id_seq    | sequence | dropmunch
+ public | import_format                     | table    | dropmunch
+ public | import_format_column              | table    | dropmunch
+ public | import_format_column_id_seq       | sequence | dropmunch
+ public | import_format_id_seq              | sequence | dropmunch
+ public | import_log                        | table    | dropmunch
+ public | import_log_id_seq                 | sequence | dropmunch
+
+dropmunch=> \dT
+           List of data types
+ Schema |      Name       | Description
+--------+-----------------+-------------
+ public | format_datatype |
+ public | import_status   |
+
+dropmunch=> select * from import_format;
+ id |      name
+----+----------------
+  1 | testformat1
+  2 | testformat2
+  3 | hotcolor
+  4 | origspecformat
+
+dropmunch=> select * from import_format_column;
+ id | import_format_id |      name      | width | datatype | nullable
+----+------------------+----------------+-------+----------+----------
+  1 |                1 | name           |    10 | TEXT     | f
+  2 |                1 | valid          |     1 | BOOLEAN  | f
+  3 |                1 | count          |     3 | INTEGER  | f
+  4 |                2 | name           |     1 | TEXT     | f
+  5 |                2 | valid          |     5 | BOOLEAN  | f
+  6 |                2 | count          |     3 | INTEGER  | f
+  7 |                3 | color          |     7 | TEXT     | f
+  8 |                3 | sohot_rightnow |     1 | BOOLEAN  | f
+  9 |                4 | name           |    10 | TEXT     | f
+ 10 |                4 | valid          |     1 | BOOLEAN  | f
+ 11 |                4 | count          |     3 | INTEGER  | f
+
+dropmunch=> select * from import_log;
+ id | import_format_id |      creation_date      | import_status | num_rows_processed | file_checksum
+----+------------------+-------------------------+---------------+--------------------+---------------
+  1 |                2 | 2010-10-01T13:47:12.899 | complete      |                  4 |
+  2 |                4 | 2007-10-01T01:00        | complete      |                  3 |
+  3 |                1 | 2007-10-01T13:47:12.345 | complete      |                  3 |
+  4 |                1 | 2007-10-01T13:47:12.346 | complete      |                  3 |
+  5 |                3 | 1999-12-31T23:59:59.999 | complete      |                  6 |
+
+dropmunch=> select * from import_data_origspecformat;
+ id | import_log_id |    name    | valid | count
+----+---------------+------------+-------+-------
+  1 |             2 | Foonyor    | t     |     1
+  2 |             2 | Barzane    | f     |   -12
+  3 |             2 | Quuxitude  | t     |   103
+
+dropmunch=> select * from import_data_testformat1;
+ id | import_log_id |    name    | valid | count
+----+---------------+------------+-------+-------
+  1 |             3 | bananas    | f     |    92
+  2 |             3 | radishes   | f     |   -28
+  3 |             3 | mushrooms  | t     |   624
+  4 |             4 | lemons     | f     |    23
+  5 |             4 | pickles    | f     |    34
+  6 |             4 | mangos     | t     |   922
+
+dropmunch=> select * from import_data_testformat2;
+ id | import_log_id | name | valid | count
+----+---------------+------+-------+-------
+  1 |             1 | Z    | t     |   139
+  2 |             1 | d    | f     |   372
+  3 |             1 | F    | t     |    98
+  4 |             1 | a    | f     |   -75
+
+dropmunch=> select * from import_data_hotcolor;
+ id | import_log_id |  color  | sohot_rightnow
+----+---------------+---------+----------------
+  1 |             5 | orangey | t
+  2 |             5 | blueish | f
+  3 |             5 | auburny | t
+  4 |             5 | burning | t
+  5 |             5 | flaming | f
+  6 |             5 | burpley | t
+
+########################################
+####### Program output below ... #######
+########################################
+/usr/bin/python3.4 /home/z/PycharmProjects/dropmunch/dropmunch/munch_process.py -v
+
+INFO:MunchSpecs:Spec table import_data_testformat1 doesn't exist yet. We'll attempt to create it.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:MunchSpecs:Created spec table import_testformat1 in 398.0 ms
+INFO:MunchSpecs:Completed persisting spec into import_format in 424.0 ms
+INFO:MunchSpecs:Completed retrieval of 1 unprocessed files in 424.0 ms
+INFO:MunchSpecs:Spec table import_data_testformat2 doesn't exist yet. We'll attempt to create it.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:MunchSpecs:Created spec table import_testformat2 in 386.0 ms
+INFO:MunchSpecs:Completed persisting spec into import_format in 400.0 ms
+INFO:MunchSpecs:Completed retrieval of 2 unprocessed files in 400.0 ms
+INFO:MunchSpecs:Spec table import_data_hotcolor doesn't exist yet. We'll attempt to create it.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:MunchSpecs:Created spec table import_hotcolor in 410.0 ms
+INFO:MunchSpecs:Completed persisting spec into import_format in 420.0 ms
+INFO:MunchSpecs:Completed retrieval of 3 unprocessed files in 420.0 ms
+INFO:MunchSpecs:Spec table import_data_origspecformat doesn't exist yet. We'll attempt to create it.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:alembic.runtime.migration:Context impl PostgresqlImpl.
+INFO:alembic.runtime.migration:Will assume transactional DDL.
+INFO:MunchSpecs:Created spec table import_origspecformat in 547.0 ms
+INFO:MunchSpecs:Completed persisting spec into import_format in 555.0 ms
+INFO:MunchSpecs:Completed retrieval of 4 unprocessed files in 555.0 ms
+INFO:MunchSpecs:Completed retrieval of 4 unprocessed files in 1801.0 ms
+INFO:MunchSpecs:Completed processing 4 spec files, with 0 failures in 1801.0 ms
+INFO:MunchSpecs:Completed loading spec from db in 19.0 ms
+INFO:MunchData:updating import_log id 1 - incrementing num_rows_processed by 4 and setting status to complete
+INFO:MunchSpecs:Completed loading spec from db in 20.0 ms
+INFO:MunchData:updating import_log id 2 - incrementing num_rows_processed by 3 and setting status to complete
+INFO:MunchSpecs:Completed loading spec from db in 12.0 ms
+INFO:MunchData:updating import_log id 3 - incrementing num_rows_processed by 3 and setting status to complete
+INFO:MunchSpecs:Completed loading spec from db in 20.0 ms
+INFO:MunchData:updating import_log id 4 - incrementing num_rows_processed by 3 and setting status to complete
+INFO:MunchSpecs:Completed loading spec from db in 20.0 ms
+INFO:MunchData:updating import_log id 5 - incrementing num_rows_processed by 6 and setting status to complete

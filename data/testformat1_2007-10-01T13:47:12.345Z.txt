@@ -1,0 +1,3 @@
+bananas   0092
+radishes  0-28
+mushrooms 1624

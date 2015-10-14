@@ -1,0 +1,3 @@
+lemons    0023
+pickles   0 34
+mangos    1922
